@@ -1,0 +1,46 @@
+Sub row_iterator()
+
+    Application.ScreenUpdating = False
+    
+    Worksheets("Data").Activate
+    
+    For row_num = 1 To 10000
+        
+        ActiveSheet.Cells(row_num, 1).Select
+        
+        If InStr(Selection.Value, ",") > 0 Then
+                
+                row_index = row_num
+                
+                store_id_arr = Split(ActiveCell.Value, ",")
+                                    
+                For i = LBound(store_id_arr) To UBound(store_id_arr)
+                    ' Select active row and insert a new, identical row beneath it
+                    Rows(row_index).Select
+                    Selection.Copy
+                    Selection.Insert Shift:=xlDown
+                    
+                    ' Copy i'th store id of the array and paste to the first row
+                    ActiveSheet.Cells(row_index, 1).Value = Trim(store_id_arr(i))
+                    row_index = row_index + 1
+                Next i
+                
+                Application.CutCopyMode = False
+                Rows(row_index).Delete
+        End If
+        
+    Next row_num
+    
+    ActiveWorkbook.RefreshAll
+    Worksheets("Tracker Tool").Activate
+    
+    Application.ScreenUpdating = True
+    
+End Sub
+
+
+Sub ClearData()
+    Worksheets("Data").Activate
+    Worksheets("Data").Range("A2:K50000").ClearContents
+    Worksheets("Data").Cells(2, 1).Select
+End Sub
